@@ -19,7 +19,8 @@
                 </tr>
                 {% for employee in employees %}
                 <tr>
-                    <th>{{employee.id}}</th>
+                    {% comment %} <th>{{employee.id}}</th> {% endcomment %}
+                    <th scope="row">{{forloop.counter}}</th>
                     <td>{{employee.name}}</td>
                     <td>{{employee.email}}</td>
                     <td>{{employee.address}}</td>
