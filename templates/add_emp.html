@@ -2,9 +2,9 @@
 {% block content %}
 <div class="container">
 <div class="row">
-<div class="col col-lg-8 m-auto mt-5 p-2">
+<div class="col col-lg-10 m-auto mt-5 p-2">
     <h2 class="m-4 text-center">Add Employee</h2>
-    <form class="row g-3" method="POST">
+    <form class="row g-5" method="POST">
         {% csrf_token %}
         <div class="col-md-6">
             <label for="inputPassword4" class="form-label">Name</label>
@@ -26,6 +26,16 @@
             {% endfor %}
             </select>
         </div>
+
+        <div class="col-md-4">
+            <label for="inputState" class="form-label">Department</label>
+            <select id="inputState" name="department" class="form-select" required>
+                {% for department in departments %}
+                    <option value="{{ department.id }}">{{ department.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
         <div class="col-md-4">
             <label for="inputState" class="form-label">Report to</label>
             <select id="inputState" name="reportto" class="form-select">
@@ -37,14 +47,7 @@
                 {% endfor %}
             </select>
         </div>
-        <div class="col-md-4">
-            <label for="inputState" class="form-label">Department</label>
-            <select id="inputState" name="department" class="form-select" required>
-                {% for department in departments %}
-                    <option value="{{ department.id }}">{{ department.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
+        
         <div class="col-12 d-flex justify-content-center">
             <button type="submit" class="btn btn-primary">Add</button>
         </div>

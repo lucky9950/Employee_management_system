@@ -8,6 +8,7 @@ from django.db.models import Sum
 def home(request):
     return render(request, "base.html")
 
+# add employee
 def add_emp(request):
     
     if request.method == 'POST':
@@ -37,6 +38,14 @@ def add_emp(request):
         }
     return render(request,"add_emp.html", context)
 
+
+# show all employee enformation
+def employees(request):
+    employees = Employee.objects.all()
+    context = {'employees' : employees}
+    return render(request,"employees.html", context)
+
+# Edit employee details
 def edit_employee(request, emp_id):
     
     if request.method == 'POST':
@@ -72,8 +81,9 @@ def edit_employee(request, emp_id):
             'designation_choices': designation_choices,
             'departments': departments,
         }
-    return render(request,"edit_employee.html", context)
+    return render(request,"edit_emp.html", context)
 
+# Delete Employee
 def del_employee(request, emp_id):
     employee = Employee.objects.get(id = emp_id)
     employee.delete()
@@ -82,12 +92,8 @@ def del_employee(request, emp_id):
 
 
 
-def employees(request):
-    employees = Employee.objects.all()
-    context = {'employees' : employees}
-    return render(request,"employees.html", context)
 
-
+# Add department
 def add_department(request):
     
     if request.method == 'POST':
@@ -100,8 +106,16 @@ def add_department(request):
         messages.success(request,"Department added successfully !")
         return redirect('/departments')
     else:
-        return render(request,"add_department.html")
+        return render(request,"add_dep.html")
+    
 
+
+def departments(request):
+    departments = Department.objects.all()
+    context = {'departments' : departments}
+    return render(request,"departments.html", context)
+
+# Edit Department details
 def edit_department(request, dep_id):
     
     if request.method == 'POST':
@@ -118,20 +132,17 @@ def edit_department(request, dep_id):
     else:
         department = Department.objects.get(id = dep_id)
         context = {'department' : department}
-        return render(request,"edit_department.html", context)
+        return render(request,"edit_dep.html", context)
 
+
+# delete department
 def del_department(request, dep_id):
     department = Department.objects.get(id = dep_id)
     department.delete()
     messages.success(request,"Department deleted successfully !")
     return redirect('/departments/')
 
-def departments(request):
-    departments = Department.objects.all()
-    context = {'departments' : departments}
-    return render(request,"departments.html", context)
-
-
+# cheack heirarchy
 def check_hierarchy(request, dep_id):
     try:
         department  = Department.objects.get(id = dep_id)
@@ -144,10 +155,11 @@ def check_hierarchy(request, dep_id):
         }
     except Employee.DoesNotExist:
         messages.error(request,"Manager not found for this department !")
-        return render(request, "hierarchy.html", {'error_message': 'Department not found'})
+        return render(request, "hierarchy_.html", {'error_message': 'Department not found'})
 
-    return render(request,"hierarchy.html", context)
+    return render(request,"hierarchy_.html", context)
 
+# add salary
 def add_salary(request):
     employees = Employee.objects.all()
     context = {'employees' : employees}
@@ -165,9 +177,9 @@ def add_salary(request):
         return redirect('/salary')
 
 
-    return render(request,"add_salary.html", context)
+    return render(request,"add_sal.html", context)
 
-
+# edit salary
 def edit_salary(request, sal_id):
     employee = EmployeeSalary.objects.get(id = sal_id)
     context = {'employee' : employee}
@@ -188,14 +200,22 @@ def edit_salary(request, sal_id):
         return redirect('/salary')
 
 
-    return render(request,"edit_salary.html", context)
+    return render(request,"edit_sal.html", context)
 
+# delete Salary
 def del_salary(request, sal_id):
     salary = EmployeeSalary.objects.get(id = sal_id)
     salary.delete()
     messages.success(request,"Salary record deleted successfully !")
     return redirect('/salary/')
 
+# show salary
+def salary(request):
+    emp_salary = EmployeeSalary.objects.all()
+    context = {'salary' : emp_salary}
+    return render(request,"salary.html", context)
+
+# show department salary
 def dep_salary(request):
 
     if request.method == 'POST':
@@ -224,14 +244,14 @@ def dep_salary(request):
         department_totals_list = [{'department_name': department_name, 'total_salary': total_salary} for department_name, total_salary in department_totals_dict.items()]
 
         # Assuming you want to display the results in a template
-        return render(request, "dep_salary.html", {'departments': department_totals_list})
+        return render(request, "dep_sal.html", {'departments': department_totals_list})
 
     else:
         
-        # Get all departments
+        # gets all departments
         all_departments = Department.objects.all()
 
-        # Use aggregation to calculate the total salary for each department
+        #  calculate the total salary for each department
         department_totals = EmployeeSalary.objects.values('employee__department__name').annotate(total_salary=Sum('salary'))
 
         # Create a dictionary to store total salary for each department
@@ -246,10 +266,6 @@ def dep_salary(request):
         # Create a list of dictionaries to pass to the template
         department_totals_list = [{'department_name': department_name, 'total_salary': total_salary} for department_name, total_salary in department_totals_dict.items()]
 
-        # Assuming you want to display the results in a template
-        return render(request, "dep_salary.html", {'departments': department_totals_list})
+        #  display the results in a template
+        return render(request, "dep_sal.html", {'departments': department_totals_list})
     
-def salary(request):
-    emp_salary = EmployeeSalary.objects.all()
-    context = {'salary' : emp_salary}
-    return render(request,"salary.html", context)
